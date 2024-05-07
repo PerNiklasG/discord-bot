@@ -42,3 +42,47 @@ async fn serenity(
 
     Ok(client.into())
 }
+
+fn string_builder() -> String {
+    let name = get_random_name();
+    let role = get_random_role();
+    let office = get_random_office();
+
+    format!("Name: {}, Role: {}, Office: {}", name, role, office)
+}
+
+fn get_random_name() -> String {
+    let names = "Alice,Bob,Eric";
+    let names_vec: Vec<&str> = names.split(",").collect();
+    
+    let mut rng = rand::thread_rng();
+    let random_index = rng.gen_range(0..names_vec.len());
+
+    let selected_name = names_vec[random_index];
+
+    selected_name.to_string()
+}
+
+fn get_random_role() -> String {
+    let roles = "Admin,User,Owner";
+    let roles_vec: Vec<&str> = roles.split(",").collect();
+    
+    let mut rng = rand::thread_rng();
+    let random_index = rng.gen_range(0..roles_vec.len());
+
+    let selected_role = roles_vec[random_index];
+
+    selected_role.to_string()
+}
+
+fn get_random_office() -> String {
+    let office = "New York,Los Angeles,Chicago";
+    let office_vec: Vec<&str> = office.split(",").collect();
+    
+    let mut rng = rand::thread_rng();
+    let random_index = rng.gen_range(0..office_vec.len());
+
+    let selected_office = office_vec[random_index];
+
+    selected_office.to_string()
+}
