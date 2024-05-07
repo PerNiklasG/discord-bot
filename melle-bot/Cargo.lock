@@ -809,6 +809,7 @@ name = "melle-bot"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "rand",
  "serenity",
  "shuttle-runtime",
  "shuttle-serenity",
