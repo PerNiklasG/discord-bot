@@ -59,7 +59,10 @@ impl EventHandler for Bot {
                 "I live boys, I live! 😎",
                 "Någon borde städa upp här, det ser fördjävligt ut. 🧐",
                 "Jag fyller år, då får jag spela hela tiden. 🥳",
-                "Jag har en aggressiv ⚔ spelstil! 💪"
+                "Jag har en aggressiv ⚔ spelstil! 💪",
+                "Mellebajs, mellebajs! 💩",
+                "Back in the botlane boooys! 😎",
+                "Ni förståååår inte 🤡"
             ];
 
             let random_vec_index = {
