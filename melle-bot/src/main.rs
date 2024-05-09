@@ -12,17 +12,68 @@ struct Bot;
 #[async_trait]
 impl EventHandler for Bot {
     async fn message(&self, ctx: Context, msg: Message) {
+        // Handles recursive responses from the bot
+        if msg.author.bot {
+            return;
+        }
+
+        let content_lower = msg.content.to_lowercase();
         if msg.content == "!hello" {
             if let Err(e) = msg.channel_id.say(&ctx.http, "world!").await {
                 error!("Error sending message: {:?}", e);
             }
         }
+
+        // Det skulle passa dig
         if msg.content == "!vadskullepassamig" {
             if let Err(e) = msg.channel_id.say(&ctx.http, string_builder()).await {
                 error!("Error sending message: {:?}", e);
             }
         }
+
+        // He bli inge kaffe
+        if content_lower.contains("kaffe") {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "He bli INGE kaffe!!").await {
+                error!("Error sending message: {:?}", e);
+            }
+        }
+
+        if content_lower.contains("långt") || content_lower.contains("kort") || content_lower.contains("km") || content_lower.contains("mil") || content_lower.contains("kilometer") || content_lower.contains("meter") || content_lower.contains("distans") {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "De e lika långt för meeej som för deeej").await {
+                error!("Error sending message: {:?}", e);
+            }
+        } 
+
+        let chance_of_responding = 10;
+
+        let random = {
+            let mut rng = thread_rng();
+            rng.gen_range(0..100)
+        };
+        if random < chance_of_responding {
+            let responses = vec! [
+                "MEN!",
+                "Dö inte här nu Berg... 😰\nMen vad GÖR DU!? 😱",
+                "Men jag hade ju rödbuff... 🤠",
+                "Jaa e död, jaa e död. 😵",
+                "I live boys, I live! 😎",
+                "Någon borde städa upp här, det ser fördjävligt ut. 🧐",
+                "Jag fyller år, då får jag spela hela tiden. 🥳",
+                "Jag har en aggressiv ⚔ spelstil! 💪"
+            ];
+
+            let random_vec_index = {
+                let mut rng = thread_rng();
+                rng.gen_range(0..responses.len())
+            };
+
+            let response = responses[random_vec_index];
+            if let Err(why) = msg.channel_id.say(&ctx.http, response).await {
+                error!("Error sending message: {:?}", why);
+            }
+        }
     }
+
 
     async fn ready(&self, _: Context, ready: Ready) {
         info!("{} is connected!", ready.user.name);
