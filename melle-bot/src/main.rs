@@ -8,7 +8,6 @@ use shuttle_runtime::SecretStore;
 use tracing::{error, info};
 use rand::{thread_rng, Rng};
 use reqwest::Error;
-use std::sync::Arc;
 use serde::Deserialize;
 
 struct Bot{
@@ -43,7 +42,7 @@ impl EventHandler for Bot {
 
         // Det skulle passa dig
         if msg.content == "!vadskullepassamig" {
-            let response = utils::string_builder();
+            let response = utils::string_builder(&self.champion_names);
             if let Err(why) = msg.channel_id.say(&ctx.http, response).await {
                 error!("Error sending message: {:?}", why);
             }
@@ -51,7 +50,7 @@ impl EventHandler for Bot {
 
         // Flex 5 comp 
         if msg.content == "!fill5" {
-            let combined_message = utils::fill_builder();
+            let combined_message = utils::fill_builder(&self.champion_names);
             if let Err(why) = msg.channel_id.say(&ctx.http, combined_message).await {
                 error!("Error sending message: {:?}", why);
             }
