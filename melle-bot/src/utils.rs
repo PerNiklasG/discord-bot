@@ -1,5 +1,6 @@
 // utils.rs
 use rand::{thread_rng, Rng};
+use std::sync::{Arc, RwLock};
 
 pub static BUILDS: &str = "AD,AP,Tank,On-Hit,Ability Haste";
 pub static ROLES: &str = "Top,Mid,Jungle,Bot,Supp";
@@ -17,6 +18,14 @@ pub fn get_random(s: String) -> String {
     let result = vec[random_index];
 
     result.to_string()
+}
+
+pub fn get_random_list(champion_names: Arc<RwLock<Vec<String>>>) -> String {
+    let names = champion_names.read().unwrap();
+    let mut rng = thread_rng();
+    let random_index = rng.gen_range(0..names.len());
+
+    names[random_index].clone()
 }
 
 pub fn fill_builder() -> String {

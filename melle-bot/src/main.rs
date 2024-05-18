@@ -7,9 +7,23 @@ use serenity::{
 use shuttle_runtime::SecretStore;
 use tracing::{error, info};
 use rand::{thread_rng, Rng};
-use utils::{string_builder, fill_builder};
+use reqwest::Error;
+use std::sync::Arc;
+use serde::Deserialize;
 
-struct Bot;
+struct Bot{
+    champion_names: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct ChampionData {
+    data: std::collections::HashMap<String, Champion>,
+}
+
+#[derive(Deserialize)]
+struct Champion {
+    name: String,
+}
 
 #[async_trait]
 impl EventHandler for Bot {
@@ -29,14 +43,15 @@ impl EventHandler for Bot {
 
         // Det skulle passa dig
         if msg.content == "!vadskullepassamig" {
-            if let Err(why) = msg.channel_id.say(&ctx.http, string_builder()).await {
+            let response = utils::string_builder();
+            if let Err(why) = msg.channel_id.say(&ctx.http, response).await {
                 error!("Error sending message: {:?}", why);
             }
         }
 
         // Flex 5 comp 
         if msg.content == "!fill5" {
-            let combined_message = fill_builder();
+            let combined_message = utils::fill_builder();
             if let Err(why) = msg.channel_id.say(&ctx.http, combined_message).await {
                 error!("Error sending message: {:?}", why);
             }
@@ -90,7 +105,6 @@ impl EventHandler for Bot {
         }
     }
 
-
     async fn ready(&self, _: Context, ready: Ready) {
         info!("{} is connected!", ready.user.name);
     }
@@ -105,15 +119,34 @@ async fn serenity(
         .get("DISCORD_TOKEN")
         .context("'DISCORD_TOKEN' was not found")?;
 
+//    let riot_api_key = secrets
+//        .get("RIOT_API_KEY")
+//        .context("'RIOT_API_KEY' was not found")?;
+
+    let champion_names = fetch_champion_names().await.unwrap_or_else(|why| {
+        error!("Failed to fetch champion names: {:?}", why);
+        vec![]
+    });
+
+    
+    println!("List of champs {:?}", champion_names);
+
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
 
     let client = Client::builder(&token, intents)
-        .event_handler(Bot)
+        .event_handler(Bot { champion_names })
         .await
         .expect("Err creating client");
 
     Ok(client.into())
+}
+
+async fn fetch_champion_names() -> Result<Vec<String>, Error> {
+    let url = "http://ddragon.leagueoflegends.com/cdn/14.10.1/data/en_US/champion.json";
+    let response = reqwest::get(url).await?.json::<ChampionData>().await?;
+    let champion_names = response.data.values().map(|champ| champ.name.clone()).collect();
+    Ok(champion_names)
 }
 
 mod utils;
