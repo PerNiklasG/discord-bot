@@ -56,6 +56,14 @@ impl EventHandler for Bot {
             }
         }
 
+        // Helper funktion för att få info kring kommandon
+        if msg.content == "!help" {
+            let response = "Jag är riktiga Melle, JA E INGEN BOT. Jag kan hjälpa dig att välja vad som skulle passa dig. Skriv: \n* `!vadskullepassamig` så räknar jag ut vad som skulle passa dig. \n* `!flex5` om du istället vill att jag räknar ut vad som skulle passa er som lag. \nMina tips är baserade på årtionden av erfarenhet och en oändlig rad meriter, inte minst som SJUTTONDE BÄSTA Jarvan EUW!";
+            if let Err(why) = msg.channel_id.say(&ctx.http, response).await {
+                error!("Error sending message: {:?}", why);
+            }
+        }
+
         // He bli inge kaffe
         if content_lower.contains("kaffe") {
             if let Err(why) = msg.channel_id.say(&ctx.http, "He bli INGE kaffe!!").await {
