@@ -5,17 +5,14 @@ pub static BUILDS: &str = "AD,AP,Tank,On-Hit,Ability Haste";
 pub static ROLES: &str = "Top,Mid,Jungle,Bot,Supp";
 
 pub fn string_builder(champion_names: &[String]) -> String {
-    format!("Du borde testa {} {} {}, deeet hade passat DIG!", get_random(BUILDS.to_string()), get_random_list(champion_names), get_random(ROLES.to_string()))
+    format!("Du borde testa {} {} {}, deeet hade passat DIG!", get_random(BUILDS), get_random_list(champion_names), get_random(ROLES))
 }
 
-pub fn get_random(s: String) -> String {
+pub fn get_random(s: &str) -> &str {
     let vec: Vec<&str> = s.split(",").collect();
     let mut rng = rng();
     let random_index = rng.random_range(0..vec.len());
-
-    let result = vec[random_index];
-
-    result.to_string()
+    vec[random_index]
 }
 
 pub fn get_random_list(input: &[String]) -> String {
@@ -28,7 +25,7 @@ pub fn get_random_list(input: &[String]) -> String {
 pub fn fill_builder(champion_names: &[String]) -> String {
     let positions = ["Top", "Mid", "Jungle", "Bot", "Supp"];
     let team: Vec<String> = positions.iter().map(|&pos| {
-        format!("{}: {} {}", pos, get_random(BUILDS.to_string()), get_random_list(champion_names))
+        format!("{}: {} {}", pos, get_random(BUILDS), get_random_list(champion_names))
     }).collect();
 
     format!(
@@ -37,8 +34,8 @@ pub fn fill_builder(champion_names: &[String]) -> String {
     )
 }
 
-pub fn tft_comp_builder(trait_to_champions: &std::collections::HashMap<String, crate::TraitData>) -> String {
-    use crate::TraitData;
+pub fn tft_comp_builder(trait_to_champions: &std::collections::HashMap<String, crate::models::TraitData>) -> String {
+    use crate::models::TraitData;
     
     // Minimum number of champions required for a trait to be selectable
     // Change this to 4 or any other number as needed
